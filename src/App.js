@@ -1,20 +1,15 @@
-import React  from 'react';
+import React from 'react';
 
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import {Provider} from 'react-redux';
+import store from './store'
 
 // Components
 import FriendsContainer from './containers/FriendsContainer';
 
-// reducer
-import friendsReducer from './reducers/friendsReducer';
-
-const store = createStore(friendsReducer);
-
 function App() {
   return (
     <Provider store={store}>
-      <FriendsContainer />
+      <FriendsContainer/>
     </Provider>
   );
 }

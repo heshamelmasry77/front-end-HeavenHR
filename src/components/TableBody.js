@@ -11,25 +11,25 @@ const {
   arrayOf,
 } = PropTypes;
 
-const FriendsTableBody = ({ friends }) => (
+const FriendsTableBody = ({friends}) => (
   <TableBody>
     {
-      friends.map(({ id, name, sex, isStared }) => (
+      friends.map(({id, name, sex, isStared}) => (
         <TableRow key={id}>
-          <TableCell className="text-secondary"> { id } </TableCell>
-          <TableCell className="text-secondary"> { name } </TableCell>
+          <TableCell className="text-secondary"> {id} </TableCell>
+          <TableCell className="text-secondary"> {name} </TableCell>
           <TableCell>
             <i className={classnames(`fa`, 'text-primary', {
               'fa-female': sex === 'female',
               'fa-male': sex === 'male'
-            })} />
+            })}/>
           </TableCell>
           <TableCell> {
             <button type="button" className="btn btn-light text-primary">
               <i className={classnames('fa', {
                 'fa-star': isStared,
                 'fa-star-o': !isStared
-              })} />
+              })}/>
             </button>
           } </TableCell>
         </TableRow>
