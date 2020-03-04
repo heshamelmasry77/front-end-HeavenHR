@@ -1,35 +1,49 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-// Components
+import fetchProductsAction from '../api/products';
 import FriendsComponents from '../components/FriendsComponents';
 
-const {
-  shape,
-  arrayOf,
-} = PropTypes;
+import {
+  getProductsError,
+  getProducts,
+  getProductsPending
+} from '../store/reducers/products';
 
-class FriendsContainer extends Component {
-  render() {
-    const { friends } = this.props;
 
-    return <FriendsComponents friends={friends} />;
-  }
-}
+const Products = ({ fetchProducts, products, pending, error }) => {
+  useEffect(() => {
+    if (products.length === 0) {
+      fetchProducts();
+    }
+  }, []);
 
-FriendsContainer.propTypes = {
-  friends: arrayOf(shape({})),
+  if (pending) return <h2>loading..</h2>;
+
+  return (
+    <div>
+      {error && <span>{error}</span>}
+      <FriendsComponents friends={products}/>
+    </div>
+  );
 };
 
-FriendsContainer.defaultProps = {
-  friends: [],
-};
-
-
-const mapStateToProps = ({ friends }) => ({
-  friends,
+const mapStateToProps = state => ({
+  error: getProductsError(state.products),
+  products: getProducts(state.products),
+  pending: getProductsPending(state.products)
 });
 
-export default connect(mapStateToProps)(FriendsContainer);
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      fetchProducts: fetchProductsAction
+    },
+    dispatch
+  );
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Products);
