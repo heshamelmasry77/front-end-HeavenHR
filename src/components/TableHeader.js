@@ -17,7 +17,7 @@ export default () => (
         gender
       </TableCell>
 
-      <TableCell />
+      <TableCell/>
     </TableRow>
   </TableHead>
 );

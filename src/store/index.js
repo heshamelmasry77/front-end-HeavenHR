@@ -1,11 +1,11 @@
-import { createStore, applyMiddleware, combineReducers } from 'redux';
+import {createStore, applyMiddleware, combineReducers} from 'redux';
 import thunk from 'redux-thunk';
 
-import {productsReducer} from './reducers/products';
+import {friendsReducer} from './reducers/friends';
 
 const reducers = {
-  products: productsReducer
-}
+  friends: friendsReducer
+};
 
 const middlewares = [thunk];
 

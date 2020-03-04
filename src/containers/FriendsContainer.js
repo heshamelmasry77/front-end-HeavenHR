@@ -1,21 +1,21 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React, {useEffect} from 'react';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 
-import fetchProductsAction from '../api/products';
+import fetchFriendsAction from '../api/friends';
 import FriendsComponents from '../components/FriendsComponents';
 
 import {
-  getProductsError,
-  getProducts,
-  getProductsPending
-} from '../store/reducers/products';
+  getFriendsError,
+  getFriends,
+  getFriendsPending
+} from '../store/reducers/friends';
 
 
-const Products = ({ fetchProducts, products, pending, error }) => {
+const FriendsContainer = ({fetchFriends, friends, pending, error}) => {
   useEffect(() => {
-    if (products.length === 0) {
-      fetchProducts();
+    if (friends.length === 0) {
+      fetchFriends();
     }
   }, []);
 
@@ -24,21 +24,21 @@ const Products = ({ fetchProducts, products, pending, error }) => {
   return (
     <div>
       {error && <span>{error}</span>}
-      <FriendsComponents friends={products}/>
+      <FriendsComponents friends={friends}/>
     </div>
   );
 };
 
 const mapStateToProps = state => ({
-  error: getProductsError(state.products),
-  products: getProducts(state.products),
-  pending: getProductsPending(state.products)
+  error: getFriendsError(state.friends),
+  friends: getFriends(state.friends),
+  pending: getFriendsPending(state.friends)
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      fetchProducts: fetchProductsAction
+      fetchFriends: fetchFriendsAction
     },
     dispatch
   );
@@ -46,4 +46,4 @@ const mapDispatchToProps = dispatch =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Products);
+)(FriendsContainer);
