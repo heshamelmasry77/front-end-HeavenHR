@@ -4,7 +4,7 @@ import thunk from 'redux-thunk';
 import {friendsReducer} from './reducers/friends';
 
 const reducers = {
-  friends: friendsReducer
+  friends: friendsReducer,
 };
 
 const middlewares = [thunk];
