@@ -12,7 +12,8 @@ import {
 } from '../store/reducers/friends';
 
 
-const FriendsContainer = ({fetchFriends, friends, pending, error}) => {
+const FriendsContainer = ({fetchFriends, friends, pending, error},) => {
+  console.log(friends)
   useEffect(() => {
     if (friends.length === 0) {
       fetchFriends();

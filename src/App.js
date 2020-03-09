@@ -1,16 +1,13 @@
 import React from 'react';
-
-import {Provider} from 'react-redux';
 import store from './store'
-
 // Components
-import FriendsContainer from './containers/FriendsContainer';
+import Root from './Root';
 
 function App() {
   return (
-    <Provider store={store}>
-      <FriendsContainer/>
-    </Provider>
+    <div>
+      <Root store={store}/>
+    </div>
   );
 }
 
