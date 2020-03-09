@@ -7,6 +7,7 @@ import './Pagination.scss'
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
+
 const {
   shape,
   arrayOf,
@@ -21,11 +22,14 @@ class FriendsTableBody extends Component {
       perPage: 5,
       currentPage: 0,
       sliceData: [],
-      pageCount: 0
+      pageCount: 0,
+      search: []
     };
     this.handlePageClick = this
       .handlePageClick
       .bind(this);
+    this.searchHandler = this.searchHandler.bind(this)
+
   }
 
   handlePageClick = (e) => {
@@ -58,13 +62,44 @@ class FriendsTableBody extends Component {
     })
   }
 
-  render() {
-    console.log(this.state.pageCount)
-    return (
+  searchHandler(event) {
+    console.log(event)
+    if (event.target.value) {
+      let searchQuery = event.target.value.toLowerCase();
+      console.log('searchQuery:', searchQuery);
+      console.log(this.state)
 
+      let displayedContacts = this.state.sliceData.filter((el) => {
+        // console.log(el.name)
+        let searchValue = el.name.toLowerCase();
+        // console.log(searchValue)
+        // console.log(searchValue.indexOf(searchQuery))
+        return searchValue.indexOf(searchQuery) !== -1;
+      });
+      console.log(displayedContacts);
+      this.setState({
+        sliceData: displayedContacts
+      })
+    } else {
+      console.log('dsd')
+      const data = this.props.friends;
+
+      const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
+      this.setState({
+        pageCount: Math.ceil(data.length / this.state.perPage),
+        sliceData: slice,
+      })
+    }
+  }
+
+  render() {
+    let friends = this.state.sliceData
+    return (
       <TableBody>
+        <TableRow>
+          <input type="text" className="search" onChange={this.searchHandler}/> </TableRow>
         {
-          this.state.sliceData.map(({id, name, sex, isStared}) => (
+          friends.map(({id, name, sex, isStared}) => (
             <TableRow key={id}>
               <TableCell className="text-secondary"> {id} </TableCell>
               <TableCell className="text-secondary"> {name} </TableCell>
@@ -102,7 +137,6 @@ class FriendsTableBody extends Component {
           </TableCell>
         </TableRow>
       </TableBody>
-
     )
   }
 }
