@@ -29,7 +29,8 @@ class FriendsTableBody extends Component {
       selectedFilter: null,
       edit: false,
       id: null,
-      name: null
+      name: null,
+      isStared: false
     };
     this.handlePageClick = this
       .handlePageClick
@@ -88,15 +89,30 @@ class FriendsTableBody extends Component {
   }
 
   componentDidMount() {
+    const friendsList = window.localStorage.getItem('friendsList');
+    const parsedFriendsList = JSON.parse(friendsList);
+    if (parsedFriendsList == null) {
+      const data = this.props.friends;
+      const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
+      this.setState({
+        pageCount: Math.ceil(data.length / this.state.perPage),
+        sliceData: slice,
+      }, () => {
+        console.log(this.state)
+      })
+    } else {
+      const data = parsedFriendsList;
+      const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
+      this.setState({
+        pageCount: Math.ceil(data.length / this.state.perPage),
+        sliceData: slice,
+      }, () => {
+        console.log(this.state)
+      })
+    }
+
     console.log(this.props);
-    const data = this.props.friends;
-    const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
-    this.setState({
-      pageCount: Math.ceil(data.length / this.state.perPage),
-      sliceData: slice,
-    }, () => {
-      console.log(this.state)
-    })
+
   }
 
   handleFilter(e) {
@@ -145,11 +161,6 @@ class FriendsTableBody extends Component {
     })
   }
 
-  // handleEditFriendSubmit(id) {
-  //   console.log(id);
-  //   console.log(this.props)
-  //
-  // }
 
   handleEditFriend(e) {
     console.log('handleEditFriend')
@@ -166,19 +177,49 @@ class FriendsTableBody extends Component {
   onUpdateHandle(event) {
     event.preventDefault();
     this.setState({
-      sliceData: this.state.sliceData.map(item => {
+      sliceData: this.props.friends.map(item => {
         if (item.id === this.state.id) {
-          item['name'] = event.target.updatedFriendName.value;
+          item['name'] = event.target.updatedFriendName.value; //updating the name
           console.log(item['name']);
           return item;
-        }
+        }//todo what if the list got updated from the API itself
         return item;
       })
     }, () => {
+      console.log(this.state)
+      if (localStorage.getItem('friendsList') == null) {
+        localStorage.setItem("friendsList", JSON.stringify(this.state.sliceData))
+      } else {
+        const list = JSON.parse(localStorage.getItem('friendsList'))
+        console.log(list);
+        localStorage.setItem("friendsList", JSON.stringify(this.state.sliceData))
+      }
       this.setState({
         edit: false
       });
     });
+  }
+
+  handleStarBtn(e) {
+
+    this.setState({
+      sliceData: this.props.friends.map(item => {
+        if (item.id === arguments[0]) {
+          item['isStared'] = !arguments[1]; //updating the name
+          console.log(item['isStared']);
+          return item;
+        }//todo what if the list got updated from the API itself
+        return item;
+      })
+    }, () => {
+      if (localStorage.getItem('friendsList') == null) {
+        localStorage.setItem("friendsList", JSON.stringify(this.state.sliceData))
+      } else {
+        const list = JSON.parse(localStorage.getItem('friendsList'))
+        console.log(list);
+        localStorage.setItem("friendsList", JSON.stringify(this.state.sliceData))
+      }
+    })
   }
 
   renderEditForm() {
@@ -245,7 +286,8 @@ class FriendsTableBody extends Component {
                 })}/>
               </TableCell>
               <TableCell> {
-                <button type="button" className="btn btn-light text-primary">
+                <button type="button" className="btn btn-light text-primary"
+                        onClick={() => this.handleStarBtn(id, isStared)}>
                   <i className={classnames('fa', {
                     'fa-star': isStared,
                     'fa-star-o': !isStared
