@@ -27,7 +27,9 @@ class FriendsTableBody extends Component {
       search: [],
       filteredFriends: [],
       selectedFilter: null,
-      filterApplied: false
+      edit: false,
+      id: null,
+      name: null
     };
     this.handlePageClick = this
       .handlePageClick
@@ -130,7 +132,8 @@ class FriendsTableBody extends Component {
     })
 
   };
-  handleSorting(e){
+
+  handleSorting(e) {
     console.log(e.target.value)
     const friendsSortedArray = _.sortBy(this.props.friends, o => o[e.target.value]);
     const slice = friendsSortedArray.slice(this.state.offset, this.state.offset + this.state.perPage)
@@ -141,10 +144,61 @@ class FriendsTableBody extends Component {
       // console.log(this.state)
     })
   }
+
+  // handleEditFriendSubmit(id) {
+  //   console.log(id);
+  //   console.log(this.props)
+  //
+  // }
+
+  handleEditFriend(e) {
+    console.log('handleEditFriend')
+    console.log(this.props)
+    this.setState({
+      edit: true,
+      id: arguments[0],
+      name: arguments[1]
+    }, () => {
+      console.log(this.state)
+    });
+  }
+
+  onUpdateHandle(event) {
+    event.preventDefault();
+    this.setState({
+      sliceData: this.state.sliceData.map(item => {
+        if (item.id === this.state.id) {
+          item['name'] = event.target.updatedFriendName.value;
+          console.log(item['name']);
+          return item;
+        }
+        return item;
+      })
+    }, () => {
+      this.setState({
+        edit: false
+      });
+    });
+  }
+
+  renderEditForm() {
+    if (this.state.edit) {
+      return <form onSubmit={this.onUpdateHandle.bind(this)}>
+        <input type="text" name="updatedFriendName" defaultValue={this.state.name}/>
+        <button className="btn btn-light text-primary">Update</button>
+      </form>
+    }
+  }
+
   render() {
     let friends = this.state.sliceData;
     return (
       <TableBody>
+        <TableRow>
+          <TableCell>
+            {this.renderEditForm()}
+          </TableCell>
+        </TableRow>
         <TableRow>
           <TableCell>
             <div>
@@ -198,6 +252,12 @@ class FriendsTableBody extends Component {
                   })}/>
                 </button>
               } </TableCell>
+              <TableCell>
+                {
+                  <button className="btn btn-light text-primary" onClick={() => this.handleEditFriend(id, name)}>
+                    edit
+                  </button>
+                } </TableCell>
             </TableRow>
           ))
         }
