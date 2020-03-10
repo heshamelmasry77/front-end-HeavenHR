@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import * as PropTypes from 'prop-types';
 import ReactPaginate from 'react-paginate';
 import './Pagination.scss'
+import _ from 'lodash';
 
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
@@ -129,7 +130,17 @@ class FriendsTableBody extends Component {
     })
 
   };
-
+  handleSorting(e){
+    console.log(e.target.value)
+    const friendsSortedArray = _.sortBy(this.props.friends, o => o[e.target.value]);
+    const slice = friendsSortedArray.slice(this.state.offset, this.state.offset + this.state.perPage)
+    this.setState({
+      pageCount: Math.ceil(friendsSortedArray.length / this.state.perPage),
+      sliceData: slice,
+    }, () => {
+      // console.log(this.state)
+    })
+  }
   render() {
     let friends = this.state.sliceData;
     return (
@@ -145,6 +156,20 @@ class FriendsTableBody extends Component {
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="stared">Stared</option>
+              </select>
+            </div>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>
+            <div>
+              <select onChange={this.handleSorting.bind(this)}>
+                <option
+                  value="Sort By"
+                >Sort By
+                </option>
+                <option value="id">ID</option>
+                <option value="name">Name</option>
               </select>
             </div>
           </TableCell>
