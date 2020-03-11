@@ -4,10 +4,10 @@ import * as PropTypes from 'prop-types';
 
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
+import ReactPaginate from 'react-paginate';
 
 import TableBody from './TableBody';
 import TableHeader from './TableHeader';
-import TableCell from "@material-ui/core/TableCell";
 import _ from "lodash";
 
 const {
@@ -22,11 +22,14 @@ class FriendsComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      friends: []
+      friends: [],
+      offset: 0,
+      perPage: 5
     };
     this.handleFilter = this.handleFilter.bind(this);
     this.handleSorting = this.handleSorting.bind(this);
     this.searchHandler = this.searchHandler.bind(this);
+    this.sliceData = this.sliceData.bind(this);
   }
 
   handleFilter(e) {
@@ -60,6 +63,7 @@ class FriendsComponent extends Component {
       friends: friendsSortedArray
     })
   }
+
   searchHandler(event) {
     if (event.target.value) {
       let searchQuery = event.target.value.toLowerCase();
@@ -76,13 +80,50 @@ class FriendsComponent extends Component {
       })
     }
   }
+
+  sliceData() {
+    const data = this.state.friends;
+
+    const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage);
+    this.setState({
+      friends: slice,
+      pageCount: Math.ceil(data.length / this.state.perPage),
+    })
+  }
+
   componentDidMount() {
     this._isMounted = true;
 
-    this.setState({
-      friends: this.props.friends
-    })
+    const friendsList = window.localStorage.getItem('friendsList');
+    const parsedFriendsList = JSON.parse(friendsList);
+    console.log(this.props.friends.length > 0)
+    if (parsedFriendsList == null && (this.props.friends.length > 0)) {
+      this.setState({
+        friends: this.props.friends,
+      }, () => {
+        console.log(this.state)
+        this.sliceData();
+      })
+    } else {
+      this.setState({
+        friends: parsedFriendsList,
+      }, () => {
+        this.sliceData();
+      })
+    }
+
   }
+
+  handlePageClick = (e) => {
+    const selectedPage = e.selected;
+    const offset = selectedPage * this.state.perPage;
+    const data = this.props.friends;
+    const slice = data.slice(offset, offset + this.state.perPage)
+    this.setState({
+      friends: slice,
+      pageCount: Math.ceil(this.props.friends.length / this.state.perPage),
+    })
+  };
 
   render() {
     const friends = this.state.friends;
@@ -119,6 +160,19 @@ class FriendsComponent extends Component {
             {this._isMounted && <TableBody friends={friends}/>}
           </Table>
         </Paper>
+        {this._isMounted && <ReactPaginate
+          previousLabel={"prev"}
+          nextLabel={"next"}
+          breakLabel={"..."}
+          breakClassName={"break-me"}
+          pageCount={this.state.pageCount}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          onPageChange={this.handlePageClick}
+          containerClassName={"pagination"}
+          subContainerClassName={"pages pagination"}
+          activeClassName={"active"}/>}
+
       </Fragment>
     )
   }

@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
 import classnames from 'classnames';
 import * as PropTypes from 'prop-types';
-import ReactPaginate from 'react-paginate';
-import './Pagination.scss'
-import _ from 'lodash';
 
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
@@ -19,79 +16,25 @@ class FriendsTableBody extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      offset: 0,
-      perPage: 5,
-      currentPage: 0,
-      sliceData: [],
-      pageCount: 0,
-      search: [],
-      filteredFriends: [],
-      selectedFilter: null,
+      friends: [],
       edit: false,
       id: null,
       name: null,
       isStared: false
     };
-    this.handlePageClick = this
-      .handlePageClick
-      .bind(this);
   }
 
-  handlePageClick = (e) => {
-    const selectedPage = e.selected;
-    const offset = selectedPage * this.state.perPage;
-    this.setState({
-      currentPage: selectedPage,
-      offset: offset
-    }, () => {
-      const data = this.props.friends;
-      const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
-      this.setState({
-        sliceData: slice
-      })
-    });
-  };
-
-
   componentDidMount() {
-    const friendsList = window.localStorage.getItem('friendsList');
-    const parsedFriendsList = JSON.parse(friendsList);
-    if (parsedFriendsList == null) {
-      const data = this.props.friends;
-      const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
-      this.setState({
-        pageCount: Math.ceil(data.length / this.state.perPage),
-        sliceData: slice,
-      })
-    } else {
-      const data = parsedFriendsList;
-      const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
-      this.setState({
-        pageCount: Math.ceil(data.length / this.state.perPage),
-        sliceData: slice,
-      })
-    }
+    this.setState({
+      friends: this.props.friends,
+    })
   }
 
   componentWillReceiveProps(nextProps) {
-    const friendsList = window.localStorage.getItem('friendsList');
-    const parsedFriendsList = JSON.parse(friendsList);
-    if (parsedFriendsList == null) {
-      const data = nextProps.friends;
-      const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
-      this.setState({
-        pageCount: Math.ceil(data.length / this.state.perPage),
-        sliceData: slice,
-      })
-    } else {
-      const data = parsedFriendsList;
-      const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
-      this.setState({
-        pageCount: Math.ceil(data.length / this.state.perPage),
-        sliceData: slice,
-      })
-    }
-
+    const data = nextProps.friends;
+    this.setState({
+      friends: data,
+    })
   }
 
   handleEditFriend(e) {
@@ -107,12 +50,10 @@ class FriendsTableBody extends Component {
     let friendsArray = this.props.friends;
     let foundIndex = friendsArray.findIndex(friend => friend.id === this.state.id);
     friendsArray[foundIndex].name = event.target.updatedFriendName.value;
-    const slice = friendsArray.slice(this.state.offset, this.state.offset + this.state.perPage)
     this.setState({
-      pageCount: Math.ceil(friendsArray.length / this.state.perPage),
-      sliceData: slice
+      friends: friendsArray
     }, () => {
-      localStorage.setItem("friendsList", JSON.stringify(this.state.sliceData))
+      localStorage.setItem("friendsList", JSON.stringify(this.state.friends))
     });
     this.setState({
       edit: false
@@ -123,12 +64,10 @@ class FriendsTableBody extends Component {
     let friendsArray = this.props.friends;
     let foundIndex = friendsArray.findIndex(friend => friend.id === id);
     friendsArray[foundIndex].isStared = !isStarted;
-    const slice = friendsArray.slice(this.state.offset, this.state.offset + this.state.perPage)
     this.setState({
-      pageCount: Math.ceil(friendsArray.length / this.state.perPage),
-      sliceData: slice
+      friends: friendsArray
     }, () => {
-      localStorage.setItem("friendsList", JSON.stringify(this.state.sliceData))
+      localStorage.setItem("friendsList", JSON.stringify(this.state.friends))
     })
   }
 
@@ -142,7 +81,7 @@ class FriendsTableBody extends Component {
   }
 
   render() {
-    let friends = this.state.sliceData;
+    let friends = this.state.friends;
     return (
       <TableBody>
         <TableRow>
@@ -179,22 +118,6 @@ class FriendsTableBody extends Component {
             </TableRow>
           ))
         }
-        <TableRow>
-          <TableCell>
-            <ReactPaginate
-              previousLabel={"prev"}
-              nextLabel={"next"}
-              breakLabel={"..."}
-              breakClassName={"break-me"}
-              pageCount={this.state.pageCount}
-              marginPagesDisplayed={2}
-              pageRangeDisplayed={5}
-              onPageChange={this.handlePageClick}
-              containerClassName={"pagination"}
-              subContainerClassName={"pages pagination"}
-              activeClassName={"active"}/>
-          </TableCell>
-        </TableRow>
       </TableBody>
     )
   }
