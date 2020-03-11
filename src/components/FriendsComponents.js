@@ -7,6 +7,8 @@ import Table from '@material-ui/core/Table';
 
 import TableBody from './TableBody';
 import TableHeader from './TableHeader';
+import TableCell from "@material-ui/core/TableCell";
+import _ from "lodash";
 
 const {
   shape,
@@ -23,6 +25,7 @@ class FriendsComponent extends Component {
       friends: []
     };
     this.handleFilter = this.handleFilter.bind(this);
+    this.handleSorting = this.handleSorting.bind(this);
   }
 
   handleFilter(e) {
@@ -50,6 +53,13 @@ class FriendsComponent extends Component {
     })
   };
 
+  handleSorting(e) {
+    const friendsSortedArray = _.sortBy(this.props.friends, o => o[e.target.value]);
+    this.setState({
+      friends: friendsSortedArray
+    })
+  }
+
   componentDidMount() {
     this._isMounted = true;
 
@@ -72,6 +82,16 @@ class FriendsComponent extends Component {
             <option value="male">Male</option>
             <option value="female">Female</option>
             <option value="stared">Stared</option>
+          </select>
+        </div>
+        <div>
+          <select onChange={this.handleSorting}>
+            <option
+              value="Sort By"
+            >Sort By
+            </option>
+            <option value="id">ID</option>
+            <option value="name">Name</option>
           </select>
         </div>
         <Paper className="m-4 mt-0">

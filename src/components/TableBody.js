@@ -114,16 +114,6 @@ class FriendsTableBody extends Component {
 
   }
 
-  handleSorting(e) {
-    const friendsSortedArray = _.sortBy(this.props.friends, o => o[e.target.value]);
-    const slice = friendsSortedArray.slice(this.state.offset, this.state.offset + this.state.perPage)
-    this.setState({
-      pageCount: Math.ceil(friendsSortedArray.length / this.state.perPage),
-      sliceData: slice,
-    })
-  }
-
-
   handleEditFriend(e) {
     this.setState({
       edit: true,
@@ -178,20 +168,6 @@ class FriendsTableBody extends Component {
         <TableRow>
           <TableCell>
             {this.renderEditForm()}
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>
-            <div>
-              <select onChange={this.handleSorting.bind(this)}>
-                <option
-                  value="Sort By"
-                >Sort By
-                </option>
-                <option value="id">ID</option>
-                <option value="name">Name</option>
-              </select>
-            </div>
           </TableCell>
         </TableRow>
         <TableRow>
