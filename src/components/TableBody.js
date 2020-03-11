@@ -93,32 +93,26 @@ class FriendsTableBody extends Component {
     }
   }
 
-  handleFilter(e) {
-    let filteredFriends = this.props.friends;
-    let friendFilter = e.target.value;
+  componentWillReceiveProps(nextProps) {
+    const friendsList = window.localStorage.getItem('friendsList');
+    const parsedFriendsList = JSON.parse(friendsList);
+    if (parsedFriendsList == null) {
+      const data = nextProps.friends;
+      const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
+      this.setState({
+        pageCount: Math.ceil(data.length / this.state.perPage),
+        sliceData: slice,
+      })
+    } else {
+      const data = parsedFriendsList;
+      const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
+      this.setState({
+        pageCount: Math.ceil(data.length / this.state.perPage),
+        sliceData: slice,
+      })
+    }
 
-    filteredFriends = filteredFriends.filter((friend) => {
-      switch (friendFilter) {
-        case 'male':
-          // code block
-          return friend.sex === 'male';
-        case 'female':
-          // code block
-          return friend.sex === 'female';
-        case 'stared':
-          // code block
-          return friend.isStared;
-        default:
-          return friend
-        // code block
-      }
-    });
-    const slice = filteredFriends.slice(this.state.offset, this.state.offset + this.state.perPage)
-    this.setState({
-      pageCount: Math.ceil(filteredFriends.length / this.state.perPage),
-      sliceData: slice,
-    })
-  };
+  }
 
   handleSorting(e) {
     const friendsSortedArray = _.sortBy(this.props.friends, o => o[e.target.value]);
@@ -140,7 +134,6 @@ class FriendsTableBody extends Component {
 
   onUpdateHandle(event) {
     event.preventDefault();
-
     let friendsArray = this.props.friends;
     let foundIndex = friendsArray.findIndex(friend => friend.id === this.state.id);
     friendsArray[foundIndex].name = event.target.updatedFriendName.value;
@@ -185,21 +178,6 @@ class FriendsTableBody extends Component {
         <TableRow>
           <TableCell>
             {this.renderEditForm()}
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>
-            <div>
-              <select onChange={this.handleFilter.bind(this)}>
-                <option
-                  value="Choose Filter"
-                >Choose Filter
-                </option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="stared">Stared</option>
-              </select>
-            </div>
           </TableCell>
         </TableRow>
         <TableRow>
