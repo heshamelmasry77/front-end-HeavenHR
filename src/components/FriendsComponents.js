@@ -1,4 +1,4 @@
-import React, {Fragment, Component} from 'react';
+import React, {Component} from 'react';
 
 import * as PropTypes from 'prop-types';
 
@@ -9,6 +9,8 @@ import ReactPaginate from 'react-paginate';
 import TableBody from './TableBody';
 import TableHeader from './TableHeader';
 import _ from "lodash";
+import './FriendsComponents.scss'
+import './Pagination.scss'
 
 const {
   shape,
@@ -151,12 +153,11 @@ class FriendsComponent extends Component {
   render() {
     const friends = this.state.friends;
     return (
-      <Fragment>
-        <p className="font-weight-bold ml-4 mt-4 h3 text-uppercase">Friends</p>
+      <div className='FriendComponents container'>
         <div>
           <select onChange={this.handleFilter}>
             <option
-              value="Choose Filter"
+              value="Reset"
             >Choose Filter
             </option>
             <option value="male">Male</option>
@@ -177,12 +178,12 @@ class FriendsComponent extends Component {
         <div>
           <input type="text" className="search" placeholder='Search by Name:' onChange={this.searchHandler}/>
         </div>
-        <Paper className="m-4 mt-0">
+        <Paper>
           <Table className="p-2">
             <TableHeader/>
             {this._isMounted &&
-            <TableBody friends={friends} handStaredToFriendComponentCallback={this.handleStaredCallbackFunction}
-                       handEditFriendToFriendComponentCallback={this.handleEditFriendCallbackFunction}/>}
+            <TableBody friends={friends} handleStaredToFriendComponentCallback={this.handleStaredCallbackFunction}
+                       handleEditFriendToFriendComponentCallback={this.handleEditFriendCallbackFunction}/>}
           </Table>
         </Paper>
         {this._isMounted && <ReactPaginate
@@ -197,8 +198,7 @@ class FriendsComponent extends Component {
           containerClassName={"pagination"}
           subContainerClassName={"pages pagination"}
           activeClassName={"active"}/>}
-
-      </Fragment>
+      </div>
     )
   }
 }

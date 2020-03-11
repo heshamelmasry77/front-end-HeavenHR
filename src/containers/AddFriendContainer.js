@@ -29,9 +29,9 @@ class AddFriendContainer extends React.Component {
   }
 
   handleSubmit(event) {
-    event.preventDefault()
+    event.preventDefault();
     if ((this.state.name !== '') && (this.state.sex !== '')) {
-      this.props.actions.addFriend(this.state.name, this.state.sex, window.id++)
+      this.props.actions.addFriend(this.state.name, this.state.sex, window.id++);
       //reset input box
       this.setState({
         name: '',
@@ -42,7 +42,7 @@ class AddFriendContainer extends React.Component {
 
   render() {
     return (
-      <div className="todo__input">
+      <div className="AddFriendContainer container">
         <div className="title">
           <input
             type="text"
@@ -60,7 +60,7 @@ class AddFriendContainer extends React.Component {
           />
         </div>
         <div className="submitButton">
-          <button onClick={this.handleSubmit.bind(this)}>Add</button>
+          <button className="btn btn-light text-primary" onClick={this.handleSubmit.bind(this)}>Add</button>
         </div>
       </div>
     )
