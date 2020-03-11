@@ -17,14 +17,12 @@ class AddFriendContainer extends React.Component {
   }
 
   handleNameChange(event) {
-    console.log(event);
     this.setState({
       name: event.target.value
     })
   }
 
   handleSexChange(event) {
-    console.log(event);
     this.setState({
       sex: event.target.value
     })
@@ -33,8 +31,6 @@ class AddFriendContainer extends React.Component {
   handleSubmit(event) {
     event.preventDefault()
     if ((this.state.name !== '') && (this.state.sex !== '')) {
-      console.log(this.state);
-      // console.log(this.props.actions.addFriend());
       this.props.actions.addFriend(this.state.name, this.state.sex, window.id++)
       //reset input box
       this.setState({

@@ -1,4 +1,9 @@
-import {FETCH_FRIENDS_PENDING, FETCH_FRIENDS_SUCCESS, FETCH_FRIENDS_ERROR, ADD_FRIEND, EDIT_FRIEND} from '../actions/friends';
+import {
+  FETCH_FRIENDS_PENDING,
+  FETCH_FRIENDS_SUCCESS,
+  FETCH_FRIENDS_ERROR,
+  ADD_FRIEND,
+} from '../actions/friends';
 
 const initialState = {
   pending: false,
@@ -36,17 +41,6 @@ export function friendsReducer(state = initialState, action) {
       };
       copyList = [...state.friends, {name: payload.name, id: action.id, sex: action.sex, isStared: true}]
       return {...state, friends: copyList};
-    case EDIT_FRIEND:
-      return Object.assign({}, state, {
-        friends: state.friends.map((friend) => {
-
-          console.log(action.id)
-          console.log(friend.id)
-          // return todo.id === action.id ?
-          //   Object.assign({}, todo, {updated: false, completed: !
-          //       todo.completed}) : todo
-        })
-      });
     default:
       return state;
   }

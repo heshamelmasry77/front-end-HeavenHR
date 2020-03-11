@@ -2,7 +2,6 @@ export const FETCH_FRIENDS_PENDING = 'FETCH_FRIENDS_PENDING';
 export const FETCH_FRIENDS_SUCCESS = 'FETCH_FRIENDS_SUCCESS';
 export const FETCH_FRIENDS_ERROR = 'FETCH_FRIENDS_ERROR';
 export const ADD_FRIEND = 'ADD_FRIEND';
-export const EDIT_FRIEND = 'EDIT_FRIEND';
 
 function fetchFriendsPending() {
   return {
@@ -25,9 +24,6 @@ function fetchFriendsError(error) {
 }
 
 function addFriend(name, sex, id) {
-  console.log('addFriend > Name', name);
-  console.log('addFriend > Sex', sex);
-  console.log('ID', id);
   return {
     type: ADD_FRIEND,
     name: name,
@@ -36,13 +32,5 @@ function addFriend(name, sex, id) {
     id: id
   }
 }
-function editFriend(id) {
-  console.log('ID', id);
-  return {
-    type: EDIT_FRIEND,
-    id: id
-  }
-}
 
-
-export {fetchFriendsPending, fetchFriendsSuccess, fetchFriendsError, addFriend, editFriend};
+export {fetchFriendsPending, fetchFriendsSuccess, fetchFriendsError, addFriend};
