@@ -13,7 +13,6 @@ const {
 } = PropTypes;
 
 const FriendsComponent = ({friends}) => {
-  console.log('friends Data: ', friends)
   return (
     <Fragment>
       <p className="font-weight-bold ml-4 mt-4 h3 text-uppercase">Friends</p>
@@ -25,7 +24,7 @@ const FriendsComponent = ({friends}) => {
       </Paper>
     </Fragment>
   )
-}
+};
 
 FriendsComponent.propTypes = {
   friends: arrayOf(shape({})),

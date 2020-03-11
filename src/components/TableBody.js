@@ -41,16 +41,12 @@ class FriendsTableBody extends Component {
   handlePageClick = (e) => {
     const selectedPage = e.selected;
     const offset = selectedPage * this.state.perPage;
-    console.log(selectedPage)
-    console.log(offset)
     this.setState({
       currentPage: selectedPage,
       offset: offset
     }, () => {
-
       const data = this.props.friends;
       const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
-      console.log(slice)
       this.setState({
         sliceData: slice
       })
@@ -58,28 +54,17 @@ class FriendsTableBody extends Component {
   };
 
   searchHandler(event) {
-    console.log(event)
     if (event.target.value) {
-
       let searchQuery = event.target.value.toLowerCase();
-      console.log('searchQuery:', searchQuery);
-      console.log(this.state)
-
       let displayedContacts = this.state.sliceData.filter((el) => {
-        // console.log(el.name)
         let searchValue = el.name.toLowerCase();
-        // console.log(searchValue)
-        // console.log(searchValue.indexOf(searchQuery))
         return searchValue.indexOf(searchQuery) !== -1;
       });
-      console.log(displayedContacts);
       this.setState({
         sliceData: displayedContacts
       })
     } else {
-      console.log('dsd')
       const data = this.props.friends;
-
       const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
       this.setState({
         pageCount: Math.ceil(data.length / this.state.perPage),
@@ -97,8 +82,6 @@ class FriendsTableBody extends Component {
       this.setState({
         pageCount: Math.ceil(data.length / this.state.perPage),
         sliceData: slice,
-      }, () => {
-        console.log(this.state)
       })
     } else {
       const data = parsedFriendsList;
@@ -106,13 +89,8 @@ class FriendsTableBody extends Component {
       this.setState({
         pageCount: Math.ceil(data.length / this.state.perPage),
         sliceData: slice,
-      }, () => {
-        console.log(this.state)
       })
     }
-
-    console.log(this.props);
-
   }
 
   handleFilter(e) {
@@ -120,10 +98,6 @@ class FriendsTableBody extends Component {
     let friendFilter = e.target.value;
 
     filteredFriends = filteredFriends.filter((friend) => {
-
-      // friend[friendFilter].toLowerCase().includes(friendFilter)
-      console.log(friendFilter)
-
       switch (friendFilter) {
         case 'male':
           // code block
@@ -138,87 +112,60 @@ class FriendsTableBody extends Component {
           return friend
         // code block
       }
-      // return friend[type] === friendFilter;
     });
-    console.log(filteredFriends);
     const slice = filteredFriends.slice(this.state.offset, this.state.offset + this.state.perPage)
     this.setState({
       pageCount: Math.ceil(filteredFriends.length / this.state.perPage),
       sliceData: slice,
     })
-
   };
 
   handleSorting(e) {
-    console.log(e.target.value)
     const friendsSortedArray = _.sortBy(this.props.friends, o => o[e.target.value]);
     const slice = friendsSortedArray.slice(this.state.offset, this.state.offset + this.state.perPage)
     this.setState({
       pageCount: Math.ceil(friendsSortedArray.length / this.state.perPage),
       sliceData: slice,
-    }, () => {
-      // console.log(this.state)
     })
   }
 
 
   handleEditFriend(e) {
-    console.log('handleEditFriend')
-    console.log(this.props)
     this.setState({
       edit: true,
       id: arguments[0],
       name: arguments[1]
-    }, () => {
-      console.log(this.state)
     });
   }
 
   onUpdateHandle(event) {
     event.preventDefault();
+
+    let friendsArray = this.props.friends;
+    let foundIndex = friendsArray.findIndex(friend => friend.id === this.state.id);
+    friendsArray[foundIndex].name = event.target.updatedFriendName.value;
+    const slice = friendsArray.slice(this.state.offset, this.state.offset + this.state.perPage)
     this.setState({
-      sliceData: this.props.friends.map(item => {
-        if (item.id === this.state.id) {
-          item['name'] = event.target.updatedFriendName.value; //updating the name
-          console.log(item['name']);
-          return item;
-        }//todo what if the list got updated from the API itself
-        return item;
-      })
+      pageCount: Math.ceil(friendsArray.length / this.state.perPage),
+      sliceData: slice
     }, () => {
-      console.log(this.state)
-      if (localStorage.getItem('friendsList') == null) {
-        localStorage.setItem("friendsList", JSON.stringify(this.state.sliceData))
-      } else {
-        const list = JSON.parse(localStorage.getItem('friendsList'))
-        console.log(list);
-        localStorage.setItem("friendsList", JSON.stringify(this.state.sliceData))
-      }
-      this.setState({
-        edit: false
-      });
+      localStorage.setItem("friendsList", JSON.stringify(this.state.sliceData))
     });
+    this.setState({
+      edit: false
+    })
   }
 
-  handleStarBtn(e) {
-
+  handleStarBtn(id, isStarted) {
+    let friendsArray = this.props.friends;
+    let foundIndex = friendsArray.findIndex(friend => friend.id === id);
+    friendsArray[foundIndex].isStared = !isStarted;
+    const slice = friendsArray.slice(this.state.offset, this.state.offset + this.state.perPage)
     this.setState({
-      sliceData: this.props.friends.map(item => {
-        if (item.id === arguments[0]) {
-          item['isStared'] = !arguments[1]; //updating the name
-          console.log(item['isStared']);
-          return item;
-        }//todo what if the list got updated from the API itself
-        return item;
-      })
+      pageCount: Math.ceil(friendsArray.length / this.state.perPage),
+      sliceData: slice
     }, () => {
-      if (localStorage.getItem('friendsList') == null) {
-        localStorage.setItem("friendsList", JSON.stringify(this.state.sliceData))
-      } else {
-        const list = JSON.parse(localStorage.getItem('friendsList'))
-        console.log(list);
-        localStorage.setItem("friendsList", JSON.stringify(this.state.sliceData))
-      }
+      localStorage.setItem("friendsList", JSON.stringify(this.state.sliceData))
     })
   }
 
