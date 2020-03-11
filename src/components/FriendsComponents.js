@@ -30,6 +30,8 @@ class FriendsComponent extends Component {
     this.handleSorting = this.handleSorting.bind(this);
     this.searchHandler = this.searchHandler.bind(this);
     this.sliceData = this.sliceData.bind(this);
+    this.handleStaredCallbackFunction = this.handleStaredCallbackFunction.bind(this);
+    this.handleEditFriendCallbackFunction = this.handleEditFriendCallbackFunction.bind(this);
   }
 
   handleFilter(e) {
@@ -83,7 +85,6 @@ class FriendsComponent extends Component {
 
   sliceData() {
     const data = this.state.friends;
-
     const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage);
     this.setState({
       friends: slice,
@@ -96,12 +97,10 @@ class FriendsComponent extends Component {
 
     const friendsList = window.localStorage.getItem('friendsList');
     const parsedFriendsList = JSON.parse(friendsList);
-    console.log(this.props.friends.length > 0)
     if (parsedFriendsList == null && (this.props.friends.length > 0)) {
       this.setState({
         friends: this.props.friends,
       }, () => {
-        console.log(this.state)
         this.sliceData();
       })
     } else {
@@ -118,12 +117,36 @@ class FriendsComponent extends Component {
     const selectedPage = e.selected;
     const offset = selectedPage * this.state.perPage;
     const data = this.props.friends;
-    const slice = data.slice(offset, offset + this.state.perPage)
+    const slice = data.slice(offset, offset + this.state.perPage);
     this.setState({
       friends: slice,
       pageCount: Math.ceil(this.props.friends.length / this.state.perPage),
     })
   };
+
+  handleStaredCallbackFunction(id, isStarted) {
+    let friendsArray = this.props.friends;
+    let foundIndex = friendsArray.findIndex(friend => friend.id === id);
+    friendsArray[foundIndex].isStared = !isStarted;
+    this.setState({
+      friends: friendsArray
+    }, () => {
+      this.sliceData();
+      localStorage.setItem("friendsList", JSON.stringify(this.state.friends))
+    })
+  }
+
+  handleEditFriendCallbackFunction(name, id) {
+    let friendsArray = this.props.friends;
+    let foundIndex = friendsArray.findIndex(friend => friend.id === id);
+    friendsArray[foundIndex].name = name;
+    this.setState({
+      friends: friendsArray
+    }, () => {
+      this.sliceData();
+      localStorage.setItem("friendsList", JSON.stringify(this.state.friends))
+    });
+  }
 
   render() {
     const friends = this.state.friends;
@@ -157,7 +180,9 @@ class FriendsComponent extends Component {
         <Paper className="m-4 mt-0">
           <Table className="p-2">
             <TableHeader/>
-            {this._isMounted && <TableBody friends={friends}/>}
+            {this._isMounted &&
+            <TableBody friends={friends} handStaredToFriendComponentCallback={this.handleStaredCallbackFunction}
+                       handEditFriendToFriendComponentCallback={this.handleEditFriendCallbackFunction}/>}
           </Table>
         </Paper>
         {this._isMounted && <ReactPaginate

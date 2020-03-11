@@ -47,28 +47,14 @@ class FriendsTableBody extends Component {
 
   onUpdateHandle(event) {
     event.preventDefault();
-    let friendsArray = this.props.friends;
-    let foundIndex = friendsArray.findIndex(friend => friend.id === this.state.id);
-    friendsArray[foundIndex].name = event.target.updatedFriendName.value;
-    this.setState({
-      friends: friendsArray
-    }, () => {
-      localStorage.setItem("friendsList", JSON.stringify(this.state.friends))
-    });
+    this.props.handEditFriendToFriendComponentCallback(event.target.updatedFriendName.value, this.state.id);
     this.setState({
       edit: false
     })
   }
 
   handleStarBtn(id, isStarted) {
-    let friendsArray = this.props.friends;
-    let foundIndex = friendsArray.findIndex(friend => friend.id === id);
-    friendsArray[foundIndex].isStared = !isStarted;
-    this.setState({
-      friends: friendsArray
-    }, () => {
-      localStorage.setItem("friendsList", JSON.stringify(this.state.friends))
-    })
+    this.props.handStaredToFriendComponentCallback(id, isStarted);
   }
 
   renderEditForm() {
