@@ -26,6 +26,7 @@ class FriendsComponent extends Component {
     };
     this.handleFilter = this.handleFilter.bind(this);
     this.handleSorting = this.handleSorting.bind(this);
+    this.searchHandler = this.searchHandler.bind(this);
   }
 
   handleFilter(e) {
@@ -59,7 +60,22 @@ class FriendsComponent extends Component {
       friends: friendsSortedArray
     })
   }
-
+  searchHandler(event) {
+    if (event.target.value) {
+      let searchQuery = event.target.value.toLowerCase();
+      let displayedContacts = this.state.friends.filter((el) => {
+        let searchValue = el.name.toLowerCase();
+        return searchValue.indexOf(searchQuery) !== -1;
+      });
+      this.setState({
+        friends: displayedContacts
+      })
+    } else {
+      this.setState({
+        friends: this.props.friends
+      })
+    }
+  }
   componentDidMount() {
     this._isMounted = true;
 
@@ -93,6 +109,9 @@ class FriendsComponent extends Component {
             <option value="id">ID</option>
             <option value="name">Name</option>
           </select>
+        </div>
+        <div>
+          <input type="text" className="search" placeholder='Search by Name:' onChange={this.searchHandler}/>
         </div>
         <Paper className="m-4 mt-0">
           <Table className="p-2">

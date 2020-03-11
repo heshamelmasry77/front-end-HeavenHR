@@ -35,7 +35,6 @@ class FriendsTableBody extends Component {
     this.handlePageClick = this
       .handlePageClick
       .bind(this);
-    this.searchHandler = this.searchHandler.bind(this)
   }
 
   handlePageClick = (e) => {
@@ -53,25 +52,6 @@ class FriendsTableBody extends Component {
     });
   };
 
-  searchHandler(event) {
-    if (event.target.value) {
-      let searchQuery = event.target.value.toLowerCase();
-      let displayedContacts = this.state.sliceData.filter((el) => {
-        let searchValue = el.name.toLowerCase();
-        return searchValue.indexOf(searchQuery) !== -1;
-      });
-      this.setState({
-        sliceData: displayedContacts
-      })
-    } else {
-      const data = this.props.friends;
-      const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
-      this.setState({
-        pageCount: Math.ceil(data.length / this.state.perPage),
-        sliceData: slice,
-      })
-    }
-  }
 
   componentDidMount() {
     const friendsList = window.localStorage.getItem('friendsList');
@@ -168,11 +148,6 @@ class FriendsTableBody extends Component {
         <TableRow>
           <TableCell>
             {this.renderEditForm()}
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>
-            <input type="text" className="search" placeholder='Search by Name:' onChange={this.searchHandler}/>
           </TableCell>
         </TableRow>
         {
