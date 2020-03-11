@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
 import classnames from 'classnames';
 import * as PropTypes from 'prop-types';
-import ReactPaginate from 'react-paginate';
-import './Pagination.scss'
-import _ from 'lodash';
 
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
@@ -19,116 +16,26 @@ class FriendsTableBody extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      offset: 0,
-      perPage: 5,
-      currentPage: 0,
-      sliceData: [],
-      pageCount: 0,
-      search: [],
-      filteredFriends: [],
-      selectedFilter: null,
+      friends: [],
       edit: false,
       id: null,
       name: null,
       isStared: false
     };
-    this.handlePageClick = this
-      .handlePageClick
-      .bind(this);
-    this.searchHandler = this.searchHandler.bind(this)
-  }
-
-  handlePageClick = (e) => {
-    const selectedPage = e.selected;
-    const offset = selectedPage * this.state.perPage;
-    this.setState({
-      currentPage: selectedPage,
-      offset: offset
-    }, () => {
-      const data = this.props.friends;
-      const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
-      this.setState({
-        sliceData: slice
-      })
-    });
-  };
-
-  searchHandler(event) {
-    if (event.target.value) {
-      let searchQuery = event.target.value.toLowerCase();
-      let displayedContacts = this.state.sliceData.filter((el) => {
-        let searchValue = el.name.toLowerCase();
-        return searchValue.indexOf(searchQuery) !== -1;
-      });
-      this.setState({
-        sliceData: displayedContacts
-      })
-    } else {
-      const data = this.props.friends;
-      const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
-      this.setState({
-        pageCount: Math.ceil(data.length / this.state.perPage),
-        sliceData: slice,
-      })
-    }
   }
 
   componentDidMount() {
-    const friendsList = window.localStorage.getItem('friendsList');
-    const parsedFriendsList = JSON.parse(friendsList);
-    if (parsedFriendsList == null) {
-      const data = this.props.friends;
-      const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
-      this.setState({
-        pageCount: Math.ceil(data.length / this.state.perPage),
-        sliceData: slice,
-      })
-    } else {
-      const data = parsedFriendsList;
-      const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
-      this.setState({
-        pageCount: Math.ceil(data.length / this.state.perPage),
-        sliceData: slice,
-      })
-    }
-  }
-
-  handleFilter(e) {
-    let filteredFriends = this.props.friends;
-    let friendFilter = e.target.value;
-
-    filteredFriends = filteredFriends.filter((friend) => {
-      switch (friendFilter) {
-        case 'male':
-          // code block
-          return friend.sex === 'male';
-        case 'female':
-          // code block
-          return friend.sex === 'female';
-        case 'stared':
-          // code block
-          return friend.isStared;
-        default:
-          return friend
-        // code block
-      }
-    });
-    const slice = filteredFriends.slice(this.state.offset, this.state.offset + this.state.perPage)
     this.setState({
-      pageCount: Math.ceil(filteredFriends.length / this.state.perPage),
-      sliceData: slice,
-    })
-  };
-
-  handleSorting(e) {
-    const friendsSortedArray = _.sortBy(this.props.friends, o => o[e.target.value]);
-    const slice = friendsSortedArray.slice(this.state.offset, this.state.offset + this.state.perPage)
-    this.setState({
-      pageCount: Math.ceil(friendsSortedArray.length / this.state.perPage),
-      sliceData: slice,
+      friends: this.props.friends,
     })
   }
 
+  componentWillReceiveProps(nextProps) {
+    const data = nextProps.friends;
+    this.setState({
+      friends: data,
+    })
+  }
 
   handleEditFriend(e) {
     this.setState({
@@ -140,33 +47,14 @@ class FriendsTableBody extends Component {
 
   onUpdateHandle(event) {
     event.preventDefault();
-
-    let friendsArray = this.props.friends;
-    let foundIndex = friendsArray.findIndex(friend => friend.id === this.state.id);
-    friendsArray[foundIndex].name = event.target.updatedFriendName.value;
-    const slice = friendsArray.slice(this.state.offset, this.state.offset + this.state.perPage)
-    this.setState({
-      pageCount: Math.ceil(friendsArray.length / this.state.perPage),
-      sliceData: slice
-    }, () => {
-      localStorage.setItem("friendsList", JSON.stringify(this.state.sliceData))
-    });
+    this.props.handEditFriendToFriendComponentCallback(event.target.updatedFriendName.value, this.state.id);
     this.setState({
       edit: false
     })
   }
 
   handleStarBtn(id, isStarted) {
-    let friendsArray = this.props.friends;
-    let foundIndex = friendsArray.findIndex(friend => friend.id === id);
-    friendsArray[foundIndex].isStared = !isStarted;
-    const slice = friendsArray.slice(this.state.offset, this.state.offset + this.state.perPage)
-    this.setState({
-      pageCount: Math.ceil(friendsArray.length / this.state.perPage),
-      sliceData: slice
-    }, () => {
-      localStorage.setItem("friendsList", JSON.stringify(this.state.sliceData))
-    })
+    this.props.handStaredToFriendComponentCallback(id, isStarted);
   }
 
   renderEditForm() {
@@ -179,46 +67,12 @@ class FriendsTableBody extends Component {
   }
 
   render() {
-    let friends = this.state.sliceData;
+    let friends = this.state.friends;
     return (
       <TableBody>
         <TableRow>
           <TableCell>
             {this.renderEditForm()}
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>
-            <div>
-              <select onChange={this.handleFilter.bind(this)}>
-                <option
-                  value="Choose Filter"
-                >Choose Filter
-                </option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="stared">Stared</option>
-              </select>
-            </div>
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>
-            <div>
-              <select onChange={this.handleSorting.bind(this)}>
-                <option
-                  value="Sort By"
-                >Sort By
-                </option>
-                <option value="id">ID</option>
-                <option value="name">Name</option>
-              </select>
-            </div>
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>
-            <input type="text" className="search" placeholder='Search by Name:' onChange={this.searchHandler}/>
           </TableCell>
         </TableRow>
         {
@@ -250,22 +104,6 @@ class FriendsTableBody extends Component {
             </TableRow>
           ))
         }
-        <TableRow>
-          <TableCell>
-            <ReactPaginate
-              previousLabel={"prev"}
-              nextLabel={"next"}
-              breakLabel={"..."}
-              breakClassName={"break-me"}
-              pageCount={this.state.pageCount}
-              marginPagesDisplayed={2}
-              pageRangeDisplayed={5}
-              onPageChange={this.handlePageClick}
-              containerClassName={"pagination"}
-              subContainerClassName={"pages pagination"}
-              activeClassName={"active"}/>
-          </TableCell>
-        </TableRow>
       </TableBody>
     )
   }

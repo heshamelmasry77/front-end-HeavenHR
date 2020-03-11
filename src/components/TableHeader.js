@@ -18,6 +18,7 @@ export default () => (
       </TableCell>
 
       <TableCell/>
+      <TableCell/>
     </TableRow>
   </TableHead>
 );
