@@ -1,0 +1,32 @@
+.NavBar {
+  background-color: rgba(53, 88, 118, 1);
+  height: 60px;
+
+  > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    display: flex;
+
+    li {
+      margin: auto 5px;
+      text-transform: uppercase;
+
+      a {
+        color: white;
+
+        &.is-active {
+          font-weight: bold;
+          color: whitesmoke;
+        }
+      }
+    }
+  }
+}

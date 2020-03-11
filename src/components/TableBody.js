@@ -47,14 +47,14 @@ class FriendsTableBody extends Component {
 
   onUpdateHandle(event) {
     event.preventDefault();
-    this.props.handEditFriendToFriendComponentCallback(event.target.updatedFriendName.value, this.state.id);
+    this.props.handleEditFriendToFriendComponentCallback(event.target.updatedFriendName.value, this.state.id);
     this.setState({
       edit: false
     })
   }
 
   handleStarBtn(id, isStarted) {
-    this.props.handStaredToFriendComponentCallback(id, isStarted);
+    this.props.handleStaredToFriendComponentCallback(id, isStarted);
   }
 
   renderEditForm() {
@@ -70,11 +70,15 @@ class FriendsTableBody extends Component {
     let friends = this.state.friends;
     return (
       <TableBody>
-        <TableRow>
+        {this.state.edit && <TableRow>
           <TableCell>
             {this.renderEditForm()}
           </TableCell>
-        </TableRow>
+          <TableCell/>
+          <TableCell/>
+          <TableCell/>
+          <TableCell/>
+        </TableRow>}
         {
           friends.map(({id, name, sex, isStared}) => (
             <TableRow key={id}>
